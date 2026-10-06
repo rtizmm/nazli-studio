@@ -31,7 +31,7 @@ function app(saved = {}, blocked = false) {
   }
   for (const match of html.matchAll(/<([a-z]+)[^>]*\bid="([^"]+)"[^>]*>/g)) { const element = new Element(match[1]); element.id = match[2]; ids.set(element.id, element); }
   const dots = Array.from({ length: 4 }, () => new Element('i'));
-  const document = { hidden: false, body: new Element('body'), createElement: tag => new Element(tag), createElementNS: (_, tag) => new Element(tag), addEventListener(k, fn) { (listeners[k] ||= []).push(fn); },
+  const document = { hidden: false, documentElement: new Element('html'), body: new Element('body'), createElement: tag => new Element(tag), createElementNS: (_, tag) => new Element(tag), addEventListener(k, fn) { (listeners[k] ||= []).push(fn); },
     querySelector(s) { if (s.startsWith('#')) return ids.get(s.slice(1)); const m = s.match(/^\[data-string="(\d)"\]$/); if (m) return all.find(n => String(n.dataset.string) === m[1]); return null; },
     querySelectorAll(s) { if (s === '.beat-dots i') return dots; return all.filter(n => n.className.split(' ').includes(s.slice(1))); }
   };
@@ -47,7 +47,7 @@ function app(saved = {}, blocked = false) {
     async wav() { return new Blob(['test']); }
   }
   const timer = (fn, ms, repeat) => { const id = ++nextId; timers.set(id, { fn, at: now + ms, repeat: repeat ? ms : 0 }); return id; };
-  const context = vm.createContext({ ...music, GuitarAudio, document, window: { addEventListener() {} }, localStorage: { getItem(k) { if (blocked) throw Error('blocked'); return state.get(k) ?? null; }, setItem(k, v) { if (blocked) throw Error('blocked'); state.set(k, v); } }, devicePixelRatio: 1, Blob, URL, setTimeout: (fn, ms) => timer(fn, ms, false), setInterval: (fn, ms) => timer(fn, ms, true), clearTimeout: id => timers.delete(id), clearInterval: id => timers.delete(id) });
+  const context = vm.createContext({ ...music, GuitarAudio, document, window: { addEventListener() {} }, localStorage: { getItem(k) { if (blocked) throw Error('blocked'); return state.get(k) ?? null; }, setItem(k, v) { if (blocked) throw Error('blocked'); state.set(k, v); } }, getComputedStyle: () => ({ getPropertyValue: () => '' }), devicePixelRatio: 1, Blob, URL, setTimeout: (fn, ms) => timer(fn, ms, false), setInterval: (fn, ms) => timer(fn, ms, true), clearTimeout: id => timers.delete(id), clearInterval: id => timers.delete(id) });
   vm.runInContext(source, context);
   return { ids, state, emitted, document, async click(id) { ids.get(id).onclick(); await Promise.resolve(); await Promise.resolve(); }, key(key) { for (const fn of listeners.keydown || []) fn({ key, target: new Element(), preventDefault() {} }); }, async flush() { await Promise.resolve(); await Promise.resolve(); }, advance(ms) { const end = now + ms; while (true) { const due = [...timers].filter(([, t]) => t.at <= end).sort((a, b) => a[1].at - b[1].at)[0]; if (!due) break; now = due[1].at; if (due[1].repeat) due[1].at += due[1].repeat; else timers.delete(due[0]); due[1].fn(); } now = end; }, hide() { document.hidden = true; for (const fn of listeners.visibilitychange || []) fn(); } };
 }

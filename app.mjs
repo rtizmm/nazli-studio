@@ -1,5 +1,44 @@
-import { CHORDS, STRING_NAMES, TONES, MAX_RECORD_SECONDS, MAX_EVENTS, chordNotes, strumEvents, rhythmEvents, validClip, noteName, clamp } from './music.mjs?v=116368222768';
-import { GuitarAudio } from './audio.mjs?v=d460cd6ecd94';
+import { CHORDS, STRING_NAMES, TONES, MAX_RECORD_SECONDS, MAX_EVENTS, chordNotes, strumEvents, rhythmEvents, validClip, noteName, clamp } from './music.mjs?v=90c0394fc305';
+import { GuitarAudio } from './audio.mjs?v=ef148a6ce00f';
+// ================================================================
+// YAZILARI DEĞİŞTİRMEK İÇİN BURAYI DÜZENLEYEBİLİRSİN.
+// Ekranda işlem yaptıkça değişen yazılar ve bildirimler burada.
+// Sadece tırnak içlerini değiştir; soldaki anahtar isimlerini koru.
+// Sabit başlıklar / açıklamalar: index.html içindeki YAZI ALANI notları.
+// ================================================================
+const YAZILAR = {
+  "sesAcik": "Ses açık",
+  "sesHata": "Ses başlatılamadı. Yeniden dene.",
+  "notaSiniri": "Kayıt nota sınırına ulaştı ve kaydedildi.",
+  "ritimDur": "Ⅱ Ritmi durdur",
+  "ritimBasla": "▶ Ritmi başlat",
+  "metronomKapat": "Metronomu kapat",
+  "metronomAc": "Metronomu aç",
+  "kaydiDinle": "Kaydı dinle",
+  "kaydiDurdur": "Kaydı durdur",
+  "kayitSaklanamadi": "Kayıt bu oturumda hazır. Saklamak için WAV olarak indir.",
+  "kayitHazir": "Kaydın hazır. Dinle, döngüye al veya indir.",
+  "kayitBos": "Bu kayıtta çalınmış nota yok. Birkaç tele dokunup tekrar dene.",
+  "kayitBasladi": "Kayıt başladı. Teller senin.",
+  "hazirlaniyor": "Hazırlanıyor…",
+  "wavHazir": "WAV dosyan hazır.",
+  "wavHata": "Dosya hazırlanamadı. Tekrar dene.",
+  "wavIndir": "WAV indir ↗",
+  "bitir": "Bitir",
+  "yeniKayit": "Yeni kayıt",
+  "kaydet": "Kaydet",
+  "kayitAcik": "Kayıt açık · en fazla 60 saniye",
+  "dongude": "Kaydın döngüde çalıyor.",
+  "caliyor": "Kaydın çalıyor.",
+  "saklandi": "bu tarayıcıda saklandı",
+  "wavOner": "indirmek için WAV seç",
+  "bosDurum": "Bir fikrin varsa, kaybolmasın.",
+  "hepsiDurdu": "Tüm sesler durduruldu.",
+  "sureDoldu": "60 saniye doldu. Kaydın hazır.",
+  "sessizTel": "bu akorda sessiz",
+  "sessiz": "sessiz"
+};
+
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const audio = new GuitarAudio();
@@ -25,8 +64,8 @@ function toast(message) { $('#toast').textContent = message; $('#toast').classLi
 function savePreferences() { storage.write('nazli-studio-settings-v1', { chord, tone, bpm, pattern, volume: audio.volume, room: audio.room }); }
 async function useAudio(action) {
   const ticket = generation;
-  try { await audio.ready(); if (ticket !== generation || document.hidden) return; $('#audioStatus').textContent = 'Ses açık'; action(); }
-  catch (error) { toast(error.message || 'Ses başlatılamadı. Yeniden dene.'); }
+  try { await audio.ready(); if (ticket !== generation || document.hidden) return; $('#audioStatus').textContent = YAZILAR.sesAcik; action(); }
+  catch (error) { toast(error.message || YAZILAR.sesHata); }
 }
 function later(fn, when) {
   const id = setTimeout(() => { visualTimers.delete(id); fn(); }, Math.max(0, (when - audio.time) * 1000));
@@ -46,7 +85,7 @@ function playNote(event, when = audio.time, group = 'live', capture = true) {
   if (capture && recording) {
     const time = when - recording.start;
     if (time >= 0 && time < MAX_RECORD_SECONDS && recording.events.length < MAX_EVENTS) recording.events.push({ midi: note.midi, string: note.string, tone: note.tone, velocity: note.velocity, time });
-    if (recording.events.length >= MAX_EVENTS) finishRecording('Kayıt nota sınırına ulaştı ve kaydedildi.');
+    if (recording.events.length >= MAX_EVENTS) finishRecording(YAZILAR.notaSiniri);
   }
 }
 function pluck(index, velocity = .85) {
@@ -65,23 +104,24 @@ function updateChord() {
   $$('.string').forEach((button, index) => {
     const silent = notes[index] === null;
     button.setAttribute('aria-disabled', String(silent));
-    button.setAttribute('aria-label', `${index + 1}. tel ${STRING_NAMES[index]}: ${silent ? 'bu akorda sessiz' : noteName(notes[index])}`);
+    button.setAttribute('aria-label', `${index + 1}. tel ${STRING_NAMES[index]}: ${silent ? YAZILAR.sessizTel : noteName(notes[index])}`);
     button.querySelector('.string-note').textContent = silent ? '×' : noteName(notes[index]);
   });
   drawChord();
 }
 function chooseChord(value) { chord = value; updateChord(); savePreferences(); }
+// Akor diyagramının üzerindeki yazılar music.mjs içindeki name alanlarından gelir.
 function drawChord() {
   const svg = $('#chordDiagram'), ns = 'http://www.w3.org/2000/svg';
-  svg.replaceChildren(); svg.setAttribute('aria-label', `${CHORDS[chord].name}: ${CHORDS[chord].frets.map(f => f === null ? 'sessiz' : f).join(', ')}`);
+  svg.replaceChildren(); svg.setAttribute('aria-label', `${CHORDS[chord].name}: ${CHORDS[chord].frets.map(f => f === null ? YAZILAR.sessiz : f).join(', ')}`);
   const add = (tag, attrs, text) => { const node = document.createElementNS(ns, tag); for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value); if (text) node.textContent = text; svg.append(node); };
-  for (let i = 0; i < 6; i++) add('line', { x1: 16 + i * 16, x2: 16 + i * 16, y1: 27, y2: 111, stroke: '#c7bacd', 'stroke-width': 1 });
-  for (let fret = 0; fret <= 4; fret++) add('line', { x1: 16, x2: 96, y1: 27 + fret * 21, y2: 27 + fret * 21, stroke: '#b8a8c1', 'stroke-width': fret ? 1 : 3 });
+  for (let i = 0; i < 6; i++) add('line', { x1: 16 + i * 16, x2: 16 + i * 16, y1: 27, y2: 111, stroke: 'var(--diagram-line)', 'stroke-width': 1 });
+  for (let fret = 0; fret <= 4; fret++) add('line', { x1: 16, x2: 96, y1: 27 + fret * 21, y2: 27 + fret * 21, stroke: 'var(--diagram-line)', 'stroke-width': fret ? 1 : 3 });
   CHORDS[chord].frets.forEach((fret, index) => {
     const x = 16 + index * 16;
-    if (fret === null || fret === 0) add('text', { x, y: 18, 'text-anchor': 'middle', fill: '#9982ad', 'font-size': 12 }, fret === null ? '×' : '○');
-    else add('circle', { cx: x, cy: 27 + (fret - .5) * 21, r: 5.5, fill: '#8063a5' });
-    add('text', { x, y: 125, 'text-anchor': 'middle', fill: '#a298a6', 'font-size': 8 }, STRING_NAMES[index]);
+    if (fret === null || fret === 0) add('text', { x, y: 18, 'text-anchor': 'middle', fill: 'var(--purple)', 'font-size': 12 }, fret === null ? '×' : '○');
+    else add('circle', { cx: x, cy: 27 + (fret - .5) * 21, r: 5.5, fill: 'var(--purple)' });
+    add('text', { x, y: 125, 'text-anchor': 'middle', fill: 'var(--muted)', 'font-size': 8 }, STRING_NAMES[index]);
   });
 }
 for (let index = 0; index < 6; index++) {
@@ -131,12 +171,12 @@ updateTempo();
 $('#bpm').oninput = e => { bpm = Number(e.target.value); updateTempo(); savePreferences(); };
 $('#pattern').onchange = e => { pattern = e.target.value; savePreferences(); };
 function updateTransport() {
-  $('#rhythmToggle').textContent = rhythm ? 'Ⅱ Ritmi durdur' : '▶ Ritmi başlat'; $('#rhythmToggle').setAttribute('aria-pressed', String(rhythm));
-  $('#metroToggle').setAttribute('aria-pressed', String(metro)); $('#metroToggle').setAttribute('aria-label', metro ? 'Metronomu kapat' : 'Metronomu aç');
+  $('#rhythmToggle').textContent = rhythm ? YAZILAR.ritimDur : YAZILAR.ritimBasla; $('#rhythmToggle').setAttribute('aria-pressed', String(rhythm));
+  $('#metroToggle').setAttribute('aria-pressed', String(metro)); $('#metroToggle').setAttribute('aria-label', metro ? YAZILAR.metronomKapat : YAZILAR.metronomAc);
 }
 function ensureScheduler() { if (scheduler !== null) return; nextStep = audio.time + .06; step = 0; scheduler = setInterval(schedule, 25); schedule(); }
 function maybeStopScheduler() { if (rhythm || metro || playing) return; clearInterval(scheduler); scheduler = null; $$('.beat-dots i').forEach(dot => dot.classList.remove('on')); }
-function stopPlayback() { playing = false; audio.stop('playback'); $('#playRecording').textContent = '▶'; $('#playRecording').setAttribute('aria-label', 'Kaydı dinle'); maybeStopScheduler(); updateRecorder(); }
+function stopPlayback() { playing = false; audio.stop('playback'); $('#playRecording').textContent = '▶'; $('#playRecording').setAttribute('aria-label', YAZILAR.kaydiDinle); maybeStopScheduler(); updateRecorder(); }
 function schedule() {
   const now = audio.time, horizon = now + .12;
   if (rhythm || metro) {
@@ -167,15 +207,15 @@ function schedule() {
 }
 $('#rhythmToggle').onclick = () => useAudio(() => { rhythm = !rhythm; if (!rhythm) audio.stop('rhythm'); updateTransport(); if (rhythm || metro) ensureScheduler(); maybeStopScheduler(); });
 $('#metroToggle').onclick = () => useAudio(() => { metro = !metro; if (!metro) audio.stop('metro'); updateTransport(); if (rhythm || metro) ensureScheduler(); maybeStopScheduler(); });
-function saveClip() { clipSaved = !!clip && storage.write('nazli-studio-clip-v1', clip); if (clip && !clipSaved) toast('Kayıt bu oturumda hazır. Saklamak için WAV olarak indir.'); }
+function saveClip() { clipSaved = !!clip && storage.write('nazli-studio-clip-v1', clip); if (clip && !clipSaved) toast(YAZILAR.kayitSaklanamadi); }
 function finishRecording(message) {
   if (!recording) return;
   const duration = clamp(audio.time - recording.start, .25, MAX_RECORD_SECONDS);
   const events = recording.events.filter(e => e.time < duration);
   const nextClip = validClip({ duration, events, room: recording.room }); recording = null;
   if (nextClip) { clip = nextClip; }
-  if (nextClip) { saveClip(); toast(message || 'Kaydın hazır. Dinle, döngüye al veya indir.'); }
-  else toast('Bu kayıtta çalınmış nota yok. Birkaç tele dokunup tekrar dene.');
+  if (nextClip) { saveClip(); toast(message || YAZILAR.kayitHazir); }
+  else toast(YAZILAR.kayitBos);
   updateRecorder(); drawWave();
 }
 $('#recordToggle').onclick = () => {
@@ -183,30 +223,30 @@ $('#recordToggle').onclick = () => {
   useAudio(() => {
     stopPlayback(); rhythm = false; metro = false; audio.stop(); updateTransport(); maybeStopScheduler();
     recording = { start: audio.time, events: [], room: audio.room };
-    updateRecorder(); toast('Kayıt başladı. Teller senin.');
+    updateRecorder(); toast(YAZILAR.kayitBasladi);
   });
 };
 $('#playRecording').onclick = () => {
   if (playing) { stopPlayback(); return; }
   if (!clip || recording) return;
-  useAudio(() => { rhythm = false; metro = false; audio.stop(); updateTransport(); playing = true; playbackStart = audio.time + .08; playbackIndex = 0; playbackCycle = 0; $('#playRecording').textContent = 'Ⅱ'; $('#playRecording').setAttribute('aria-label', 'Kaydı durdur'); ensureScheduler(); updateRecorder(); });
+  useAudio(() => { rhythm = false; metro = false; audio.stop(); updateTransport(); playing = true; playbackStart = audio.time + .08; playbackIndex = 0; playbackCycle = 0; $('#playRecording').textContent = 'Ⅱ'; $('#playRecording').setAttribute('aria-label', YAZILAR.kaydiDurdur); ensureScheduler(); updateRecorder(); });
 };
 $('#loopToggle').onclick = () => { looping = !looping; $('#loopToggle').setAttribute('aria-pressed', String(looping)); if (playing && !looping) { playbackStart += playbackCycle * clip.duration; playbackCycle = 0; } };
 $('#downloadRecording').onclick = async () => {
   if (!clip || recording || exportBusy) return;
-  const snapshot = clip; exportBusy = true; updateRecorder(); $('#downloadRecording').textContent = 'Hazırlanıyor…';
+  const snapshot = clip; exportBusy = true; updateRecorder(); $('#downloadRecording').textContent = YAZILAR.hazirlaniyor;
   try {
     await new Promise(resolve => setTimeout(resolve, 20));
     const blob = await audio.wav(snapshot), url = URL.createObjectURL(blob), a = document.createElement('a');
-    a.href = url; a.download = 'nazli-studio-kaydim.wav'; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 30000); toast('WAV dosyan hazır.');
-  } catch (error) { toast(error.message || 'Dosya hazırlanamadı. Tekrar dene.'); }
-  finally { exportBusy = false; $('#downloadRecording').textContent = 'WAV indir ↗'; updateRecorder(); }
+    a.href = url; a.download = 'nazli-studio-kaydim.wav'; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 30000); toast(YAZILAR.wavHazir);
+  } catch (error) { toast(error.message || YAZILAR.wavHata); }
+  finally { exportBusy = false; $('#downloadRecording').textContent = YAZILAR.wavIndir; updateRecorder(); }
 };
 function formattedTime(seconds) { const s = Math.max(0, Math.floor(seconds)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; }
 function updateRecorder() {
-  $('#recordToggle').setAttribute('aria-pressed', String(!!recording)); $('#recordLabel').textContent = recording ? 'Bitir' : clip ? 'Yeni kayıt' : 'Kaydet';
+  $('#recordToggle').setAttribute('aria-pressed', String(!!recording)); $('#recordLabel').textContent = recording ? YAZILAR.bitir : clip ? YAZILAR.yeniKayit : YAZILAR.kaydet;
   $('#playRecording').disabled = !clip || !!recording; $('#loopToggle').disabled = !clip || !!recording; $('#downloadRecording').disabled = !clip || !!recording || exportBusy;
-  const status = recording ? 'Kayıt açık · en fazla 60 saniye' : playing ? (looping ? 'Kaydın döngüde çalıyor.' : 'Kaydın çalıyor.') : clip ? `${clip.events.length} nota · ${clipSaved ? 'bu tarayıcıda saklandı' : 'indirmek için WAV seç'}` : 'Bir fikrin varsa, kaybolmasın.';
+  const status = recording ? YAZILAR.kayitAcik : playing ? (looping ? YAZILAR.dongude : YAZILAR.caliyor) : clip ? `${clip.events.length} nota · ${clipSaved ? YAZILAR.saklandi : YAZILAR.wavOner}` : YAZILAR.bosDurum;
   if ($('#recordStatus').textContent !== status) $('#recordStatus').textContent = status;
   const position = recording ? audio.time - recording.start : playing && clip ? (looping ? (audio.time - playbackStart) % clip.duration : Math.min(clip.duration, audio.time - playbackStart)) : clip?.duration || 0;
   $('#recordTime').textContent = formattedTime(position);
@@ -215,9 +255,9 @@ function stopAll(message = false) {
   generation++; if (recording) finishRecording();
   playing = false; rhythm = false; metro = false; audio.stop(); maybeStopScheduler();
   for (const id of visualTimers) clearTimeout(id); visualTimers.clear(); pointers.clear();
-  $('#playRecording').textContent = '▶'; $('#playRecording').setAttribute('aria-label', 'Kaydı dinle');
+  $('#playRecording').textContent = '▶'; $('#playRecording').setAttribute('aria-label', YAZILAR.kaydiDinle);
   $$('.string').forEach(b => b.classList.remove('plucked', 'muted-tap')); updateTransport(); updateRecorder();
-  if (message) toast('Tüm sesler durduruldu.');
+  if (message) toast(YAZILAR.hepsiDurdu);
 }
 $('#stopAll').onclick = () => stopAll(true);
 const waveform = $('#waveform'), waveContext = waveform.getContext('2d');
@@ -228,16 +268,30 @@ function drawWave() {
   if (waveform.width !== physicalW || waveform.height !== physicalH) { waveform.width = physicalW; waveform.height = physicalH; }
   waveContext.setTransform(ratio, 0, 0, ratio, 0, 0); waveContext.clearRect(0, 0, width, height);
   const events = recording ? recording.events : clip?.events || [], duration = recording ? Math.max(5, audio.time - recording.start) : clip?.duration || 5;
-  waveContext.strokeStyle = '#e3dbe8'; waveContext.beginPath(); waveContext.moveTo(0, height / 2); waveContext.lineTo(width, height / 2); waveContext.stroke();
-  waveContext.fillStyle = recording ? '#b67485' : '#b19bc4';
+  const palette = getComputedStyle(document.documentElement);
+  waveContext.strokeStyle = palette.getPropertyValue('--line').trim() || '#e3dbe8'; waveContext.beginPath(); waveContext.moveTo(0, height / 2); waveContext.lineTo(width, height / 2); waveContext.stroke();
+  waveContext.fillStyle = recording ? (palette.getPropertyValue('--record-ink').trim() || '#b67485') : (palette.getPropertyValue('--purple').trim() || '#8063a5');
   const bins = new Float32Array(Math.ceil(width / 4));
   for (const event of events) { const index = Math.floor(event.time / duration * (bins.length - 1)); if (index >= 0 && index < bins.length) bins[index] = Math.max(bins[index], event.velocity * (.45 + (event.midi - 40) / 70)); }
   bins.forEach((value, index) => { if (!value) return; const h = Math.max(3, value * height * .8); waveContext.fillRect(index * 4, (height - h) / 2, 2, h); });
-  if (playing && clip) { const position = looping ? (audio.time - playbackStart) % clip.duration : Math.min(clip.duration, audio.time - playbackStart); waveContext.fillStyle = '#8063a5'; waveContext.fillRect(clamp(position / clip.duration * width, 0, width - 1), 0, 1.5, height); }
+  if (playing && clip) { const position = looping ? (audio.time - playbackStart) % clip.duration : Math.min(clip.duration, audio.time - playbackStart); waveContext.fillStyle = palette.getPropertyValue('--purple').trim() || '#8063a5'; waveContext.fillRect(clamp(position / clip.duration * width, 0, width - 1), 0, 1.5, height); }
 }
 if ('ResizeObserver' in window) new ResizeObserver(drawWave).observe(waveform); else window.addEventListener('resize', drawWave);
-setInterval(() => { if (document.hidden) return; if (recording && audio.time - recording.start >= MAX_RECORD_SECONDS) finishRecording('60 saniye doldu. Kaydın hazır.'); if (recording || playing) { updateRecorder(); drawWave(); } }, 100);
+setInterval(() => { if (document.hidden) return; if (recording && audio.time - recording.start >= MAX_RECORD_SECONDS) finishRecording(YAZILAR.sureDoldu); if (recording || playing) { updateRecorder(); drawWave(); } }, 100);
 updateRecorder(); drawWave();
+
+// TEMA AYARI: görünen tema adlarını index.html'de, renkleri themes.css'te düzenle.
+const TEMALAR = { lavender: '#f3f0eb', midnight: '#171922', forest: '#edf2e9', sunset: '#fbefe8' };
+function applyTheme(value) {
+  const theme = Object.hasOwn(TEMALAR, value) ? value : 'lavender';
+  document.documentElement.dataset.theme = theme;
+  $('#themeSelect').value = theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', TEMALAR[theme]);
+  storage.write('nazli-studio-theme-v1', theme);
+  drawWave();
+}
+applyTheme(storage.read('nazli-studio-theme-v1', 'lavender'));
+$('#themeSelect').onchange = e => applyTheme(e.target.value);
 const help = $('#helpDialog');
 $('#helpOpen').onclick = $('#helpFooter').onclick = () => help.showModal(); $('#helpClose').onclick = () => help.close();
 help.addEventListener('click', e => { if (e.target !== help) return; const r = help.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) help.close(); });

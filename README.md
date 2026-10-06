@@ -39,3 +39,20 @@ Desktop uses an illustrated guitar with an adjacent chord/rhythm panel. Phones h
 ## Browser verification
 
 Verified in headless Chromium at 320, 390, 560, 768, 1024, 1440 and 1920 CSS-pixel widths with no horizontal page overflow. Exercised chord selection, recording and persistence across reload, loop playback and stop, accompaniment, help, and a real OfflineAudioContext WAV download with nonzero PCM samples. Desktop and phone screenshots were inspected. These checks do not replace physical-device listening or Safari testing.
+
+## Temalar ve yazıları değiştirme
+
+Üstteki **Tema** menüsünden Lavanta, Gece, Orman veya Gün batımı seçilebilir. Tema; sayfa zeminini, kartları, düğmeleri, akor çizimini ve gitar ahşabını birlikte değiştirir. Seçim aynı tarayıcıda hatırlanır.
+
+| Değiştirmek istediğin | Dosya ve aranacak bölüm |
+| --- | --- |
+| Başlıklar, slogan, açıklamalar, yardım metni | `index.html` → `YAZI ALANI` ara |
+| Kayıt, ses ve durum mesajları; değişen düğme yazıları | `app.mjs` → en üstteki `YAZILAR` bölümü |
+| Akorların görünen adları | `music.mjs` → `CHORDS` içindeki `name` alanları |
+| Sesle ilgili hata mesajları | `audio.mjs` → Türkçe düzenleme notları |
+| Tema renkleri ve gitarın ahşap tonu | `themes.css` → ilgili `data-theme` bloğu |
+| Tema menüsündeki isimler | `index.html` → `themeSelect` içindeki seçenekler |
+
+**Örnek:** `index.html` içinde `YAZI ALANI: Ana başlığı` arat. Altındaki başlık etiketinin arasındaki yazıyı değiştirebilirsin. Açıklama notları sitede görünmez, yalnızca kodda sana yol gösterir.
+
+Yazıları düzenlerken `id`, `class`, `value`, JavaScript anahtarları ve HTML etiketlerini koru. `YAZILAR` bölümünde yalnızca tırnakların içindeki metinleri değiştir; tek tırnak kullanacaksan `\'` yaz. Renklerde `--bg` sayfa, `--paper` kart, `--ink` yazı, `--purple` vurgu, `--wood-*` gitar ahşabıdır. Düzenlemelerden sonra `python3 scripts/version-assets.py` komutunu çalıştırıp değişen dosyaları birlikte kaydet.

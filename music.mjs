@@ -1,5 +1,7 @@
 export const TUNING = [40, 45, 50, 55, 59, 64];
 export const STRING_NAMES = ['E', 'A', 'D', 'G', 'B', 'e'];
+// YAZI ALANI: Akorların Türkçe adını değiştirmek istersen name: yanındaki yazıyı düzenle.
+// frets ve key alanları çalmayı kontrol eder; yalnızca isim için bunları değiştirme.
 export const CHORDS = {
   Em: { name: 'Mi minör', frets: [0, 2, 2, 0, 0, 0], key: 'q' },
   Am: { name: 'La minör', frets: [null, 0, 2, 2, 1, 0], key: 'w' },

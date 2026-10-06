@@ -1,0 +1,92 @@
+/* ==============================================================
+   TEMA RENKLERİNİ DEĞİŞTİRMEK İÇİN BURAYI DÜZENLEYEBİLİRSİN.
+   --bg: sayfa zemini             --paper: kart zemini
+   --ink: ana yazı                --muted: açıklama yazıları
+   --purple: vurgu rengi (adı eski; yeşil veya başka renk olabilir)
+   --lavender: seçili düğme zemini --line: kenarlıklar
+   --wood-*: gitarın ahşap renkleri
+   Yerleşim / boyutlar studio.css dosyasında; tema adları index.html'de.
+   ============================================================== */
+:root,
+:root[data-theme="lavender"] {
+  color-scheme: light;
+  --bg:#f3f0eb; --paper:#fffdfa; --ink:#342f3c; --muted:#786e7e;
+  --line:#e3ded8; --purple:#8063a5; --lavender:#eee7f5; --green:#7e9a86;
+  --soft:#f8f5f0; --accent-strong:#70528f; --on-accent:#ffffff;
+  --glow:#ddd0ec; --diagram-line:#b4a3bd; --record-ink:#a2556b;
+  --record-bg:#fcf0f2; --record-line:#e2c5cf; --string-label-bg:#fffdfaee;
+  --wood-light:#e4bc86; --wood-middle:#f1d3a5; --wood-dark:#c99c69;
+  --shadow:0 10px 50px #43392c07;
+}
+/* GECE: koyu zemin, mor vurgu. */
+:root[data-theme="midnight"] {
+  color-scheme: dark;
+  --bg:#171922; --paper:#222530; --ink:#f0eaf6; --muted:#b7afc2;
+  --line:#414252; --purple:#c4a1e2; --lavender:#393248; --green:#9ebaac;
+  --soft:#2b2d3a; --accent-strong:#d6b8ef; --on-accent:#241c30;
+  --glow:#413251; --diagram-line:#82718f; --record-ink:#efaab7;
+  --record-bg:#3c2b37; --record-line:#754555; --string-label-bg:#282a36ee;
+  --wood-light:#d8ae7c; --wood-middle:#c69b6c; --wood-dark:#ac7d4e;
+  --shadow:0 12px 45px #00000022;
+}
+/* ORMAN: adaçayı yeşili ve açık ahşap. */
+:root[data-theme="forest"] {
+  color-scheme: light;
+  --bg:#edf2e9; --paper:#f9fcf5; --ink:#293e32; --muted:#637466;
+  --line:#ccd9c8; --purple:#47755d; --lavender:#e1ecdf; --green:#56816b;
+  --soft:#edf3e8; --accent-strong:#315b45; --on-accent:#ffffff;
+  --glow:#cbdcc4; --diagram-line:#8fa58d; --record-ink:#a15561;
+  --record-bg:#f7eaeb; --record-line:#dfc4c6; --string-label-bg:#f9fcf5ee;
+  --wood-light:#d4bd8c; --wood-middle:#ebd9ae; --wood-dark:#bda16d;
+  --shadow:0 12px 45px #283d2910;
+}
+/* GÜN BATIMI: kiremit, şeftali ve bal rengi ahşap. */
+:root[data-theme="sunset"] {
+  color-scheme: light;
+  --bg:#fbefe8; --paper:#fff8f1; --ink:#523733; --muted:#856b62;
+  --line:#e8cfc0; --purple:#a25952; --lavender:#f5e1d5; --green:#8a946a;
+  --soft:#faede2; --accent-strong:#86443e; --on-accent:#ffffff;
+  --glow:#efd0bd; --diagram-line:#bc9684; --record-ink:#9b455e;
+  --record-bg:#fbe4e6; --record-line:#e3b8c1; --string-label-bg:#fff8f1ee;
+  --wood-light:#e7b181; --wood-middle:#f4ce9f; --wood-dark:#c78e60;
+  --shadow:0 12px 45px #7c4a3510;
+}
+/* Aşağısı renkleri ekrana uygular; sadece tema renkleri için yukarıyı düzenle. */
+body{background:radial-gradient(ellipse at 0 0,var(--glow),transparent 42%),var(--bg);background-attachment:fixed;color:var(--ink)}
+body,.instrument-panel,.side-panel,.recorder,.icon-btn,.chord-button,.strum,dialog{transition:background-color .2s,color .2s,border-color .2s}
+.brand-light,.status,.page-heading>p,.control label,.section-description,.play-hint,.stage-caption>span:first-child,.stage-footer,.quiet-btn,.tag,.chord-button small,.section-title>span,.chord-info small,.tempo-row label,.record-heading p,footer,dialog p,dd{color:var(--muted)}
+.brand small,.current-chord>span{color:var(--muted)}.tag,.icon-btn,.chord-button,.strum,.pattern-select,.metro-button,.download-button,dialog{border-color:var(--line)}
+.brand-mark{background:var(--purple);color:var(--on-accent)}
+.icon-btn,.chord-button,dialog{background:var(--paper);color:var(--ink)}
+.control output,.string-note,.section-title>span,.tempo-row output,.download-button,.footer-heart{color:var(--purple)}
+.guitar-stage{background:radial-gradient(ellipse at 40% 60%,var(--soft),transparent 72%)}
+.wood-light{stop-color:var(--wood-light)}.wood-middle{stop-color:var(--wood-middle)}.wood-dark{stop-color:var(--wood-dark)}
+.string-label,.string-note{background:var(--string-label-bg)}.string-label{color:var(--ink)}
+.string.plucked .string-label{background:var(--purple);color:var(--on-accent)}.string.muted-tap .string-label{background:var(--soft);color:var(--muted)}
+.string[aria-disabled=true] .string-note{color:var(--muted)}
+.strum,.pattern-select,.metro-button{background:var(--soft);color:var(--ink)}
+.strum:hover,.chord-button:hover{background:var(--lavender)}
+.strum.primary,.rhythm-button[aria-pressed=true]{background:var(--purple);border-color:var(--purple);color:var(--on-accent)}
+.strum.primary:hover{background:var(--accent-strong)}
+.chord-button[aria-pressed=true],.metro-button[aria-pressed=true],.icon-btn[aria-pressed=true]{background:var(--lavender);border-color:var(--purple);color:var(--purple)}
+.rhythm-button,.help-note,.tape-icon{background:var(--lavender);color:var(--purple)}.tape-icon{border-color:var(--line)}
+.beat-dots i{background:var(--line)}.beat-dots i.on{background:var(--purple);box-shadow:0 0 0 2px var(--lavender)}
+.record-button{color:var(--record-ink);background:var(--record-bg);border-color:var(--record-line)}.record-dot{background:var(--record-ink)}
+.record-button[aria-pressed=true]{background:var(--record-ink);color:var(--paper);border-color:var(--record-ink)}.record-button[aria-pressed=true] .record-dot{background:var(--paper)}
+#recordTime{color:var(--muted)}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline-color:var(--purple)}
+.theme-control{display:flex;align-items:center;gap:8px;padding:4px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.theme-control>span{font-size:10px;color:var(--muted)}.theme-control select{font-size:12px;min-height:32px;font-weight:500;color:var(--ink);max-width:130px}
+.topbar{flex-wrap:wrap}.header-right{margin-left:auto;gap:16px}
+@media(max-width:560px){
+ .header-right{width:100%;gap:10px}.theme-control{flex:1;padding:2px 12px;justify-content:space-between;min-height:44px}
+ .theme-control>span{font-size:12px}.theme-control select{font-size:16px;min-height:40px;max-width:none}
+ .status{display:none}.topbar{row-gap:16px}.page-heading{padding-top:10px}
+}
+@media(pointer:coarse){.theme-control select{font-size:16px;min-height:40px}}
+@media(prefers-reduced-motion:reduce){body,.instrument-panel,.side-panel,.recorder,.icon-btn,.chord-button,.strum,dialog{transition:none}}
+/* Küçük bildirimler ve açılır menüler de seçilen temaya uyar. */
+.toast{background:var(--ink);color:var(--paper)}
+.noscript{background:var(--lavender);color:var(--ink)}
+select option{background:var(--paper);color:var(--ink)}
+::selection{background:var(--lavender);color:var(--ink)}

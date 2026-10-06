@@ -1,4 +1,4 @@
-import { pluckSamples, encodeWav, clamp } from './music.mjs?v=116368222768';
+import { pluckSamples, encodeWav, clamp } from './music.mjs?v=90c0394fc305';
 function impulse(context) {
   const length = Math.floor(context.sampleRate * .8), b = context.createBuffer(2, length, context.sampleRate);
   let seed = 1957;
@@ -24,6 +24,7 @@ function voice(context, graph, bank, event, when) {
 }
 export class GuitarAudio {
   constructor() { this.context = null; this.graph = null; this.bank = new Map(); this.voices = new Set(); this.volume = .65; this.room = .2; }
+  // YAZI ALANI: Aşağıdaki Error(...) içindeki cümleler ses açılamayınca gösterilir.
   async ready() {
     const Audio = window.AudioContext || window.webkitAudioContext;
     if (!Audio) throw new Error('Bu tarayıcı ses motorunu desteklemiyor. Güncel bir tarayıcıyla tekrar dene.');
@@ -50,6 +51,7 @@ export class GuitarAudio {
     osc.connect(gain); gain.connect(this.graph.compressor); osc.start(when); osc.stop(when + .045);
     const v = { source: osc, gain, nodes: [osc, gain], group: 'metro' }; this.voices.add(v); osc.onended = () => { v.nodes.forEach(n => n.disconnect()); this.voices.delete(v); };
   }
+  // YAZI ALANI: WAV desteği yoksa görünen uyarı aşağıdaki Error(...) içindedir.
   async wav(clip) {
     const Offline = window.OfflineAudioContext || window.webkitOfflineAudioContext;
     if (!Offline) throw new Error('Bu tarayıcı WAV indirmeyi desteklemiyor.');

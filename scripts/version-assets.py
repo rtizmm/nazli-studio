@@ -17,7 +17,7 @@ imports('audio.mjs', ['music.mjs'])
 imports('app.mjs', ['music.mjs', 'audio.mjs'])
 path = root / 'index.html'
 content = path.read_text()
-for name in ['studio.css', 'app.mjs']:
+for name in ['studio.css', 'themes.css', 'app.mjs']:
     pattern = r'(href|src)="' + re.escape(name) + r'(?:\?[^\"]*)?"'
     content, count = re.subn(pattern, lambda m: m[1] + '="' + name + '?v=' + digest(name) + '"', content)
     if count != 1:

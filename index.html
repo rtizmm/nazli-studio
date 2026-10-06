@@ -1,25 +1,73 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" data-theme="lavender">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- YAZI ALANI: Arama sonuçlarında görünen açıklamayı content="..." içinde değiştirebilirsin. -->
 <meta name="theme-color" content="#f3f0eb"><meta name="description" content="Nazlı Studio — tellerine dokun, akorunu seç, kendi melodini kaydet. Ücretsiz sanal gitar stüdyosu.">
+<!-- YAZI ALANI: Tarayıcı sekmesinin adını aşağıdaki title içinde değiştirebilirsin. -->
 <title>Nazlı Studio · Biraz sen, biraz müzik.</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="studio.css?v=85b44ea6a6a0">
-<script type="module" src="app.mjs?v=70b5cd30f4d8"></script>
+<link rel="stylesheet" href="themes.css?v=6ee443a3e08b">
+<!-- Tema açılışta hatırlanır. Buradaki anahtarları değiştirme. -->
+<script>
+try {
+  const theme = JSON.parse(localStorage.getItem('nazli-studio-theme-v1'));
+  if (['lavender','midnight','forest','sunset'].includes(theme)) document.documentElement.dataset.theme = theme;
+} catch {}
+</script>
+<script type="module" src="app.mjs?v=2d3213a36be4"></script>
 </head>
 <body>
 <a class="skip" href="#instrument">Gitara geç</a>
-<header class="topbar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">n</span><span>nazlı<span class="brand-light">studio</span><small>YOUR LITTLE GUITAR ROOM</small></span></a><div class="header-right"><span class="status" id="audioStatus">Çalmaya hazır</span><button class="icon-btn" id="helpOpen" aria-label="Nasıl çalınır?">?</button></div></header>
+<!-- YAZI ALANI: Logodaki nazlı / studio adlarını ve altındaki küçük sloganı burada değiştirebilirsin. -->
+<header class="topbar"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">n</span><span>nazlı<span class="brand-light">studio</span><small>YOUR LITTLE GUITAR ROOM</small></span></a>
+<div class="header-right">
+<!-- YAZI ALANI: Tema adlarını option etiketlerinin içinde değiştirebilirsin; value alanlarını koru. -->
+<label class="theme-control" for="themeSelect"><span>Tema</span>
+<select id="themeSelect">
+<option value="lavender">Lavanta</option>
+<option value="midnight">Gece</option>
+<option value="forest">Orman</option>
+<option value="sunset">Gün batımı</option></select></label>
+<span class="status" id="audioStatus">Çalmaya hazır</span>
+<button class="icon-btn" id="helpOpen" aria-label="Nasıl çalınır?">?</button></div>
+</header>
 <main>
-<div class="page-heading"><div><p class="eyebrow">KENDİ SESİNİ BUL</p><h1>Biraz sen,<br class="mobile-break"> biraz <em>müzik.</em></h1></div><p>Akorunu seç. Tellere dokun.<br>Gerisi parmaklarından gelsin.</p></div>
+
+<!-- YAZI ALANI: Ana başlığı, üst küçük yazıyı ve sağdaki açıklamayı burada değiştirebilirsin. -->
+<div class="page-heading">
+<div>
+<p class="eyebrow">KENDİ SESİNİ BUL</p>
+<h1>Biraz sen,<br class="mobile-break"> biraz <em>müzik.</em></h1></div><p>Akorunu seç. Tellere dokun.<br>Gerisi parmaklarından gelsin.</p></div>
 <div class="workspace">
 <section class="instrument-panel" id="instrument" aria-labelledby="guitarTitle">
-<div class="panel-head"><div class="instrument-name"><span class="live-led" aria-hidden="true"></span><h2 id="guitarTitle">Akustik gitar</h2><span class="tag">6 TEL</span></div><button class="quiet-btn" id="stopAll" title="Tüm sesleri ve ritmi durdur">■ <span>Sustur</span><kbd>Esc</kbd></button></div>
-<div class="tone-controls"><div class="control"><label for="tone">Tını</label><select id="tone"><option value="steel">Çelik tel</option><option value="nylon">Naylon tel</option><option value="warm">Sıcak & yumuşak</option></select></div><div class="control volume-control"><label for="volume">Ses <output id="volumeValue">65%</output></label><input type="range" id="volume" min="0" max="100" value="65"></div><div class="control room-control"><label for="room">Oda <output id="roomValue">20%</output></label><input type="range" id="room" min="0" max="60" value="20"></div></div>
+
+<!-- YAZI ALANI: Gitar başlığını ve Sustur düğmesinin yazısını burada değiştirebilirsin. -->
+<div class="panel-head">
+<div class="instrument-name"><span class="live-led" aria-hidden="true"></span>
+<h2 id="guitarTitle">Akustik gitar</h2><span class="tag">6 TEL</span></div>
+<button class="quiet-btn" id="stopAll" title="Tüm sesleri ve ritmi durdur">■ <span>Sustur</span><kbd>Esc</kbd></button></div>
+
+<!-- YAZI ALANI: Tını / Ses / Oda etiketleri ve tını adları burada. option value alanlarını koru. -->
+<div class="tone-controls">
+<div class="control">
+<label for="tone">Tını</label>
+<select id="tone">
+<option value="steel">Çelik tel</option>
+<option value="nylon">Naylon tel</option>
+<option value="warm">Sıcak & yumuşak</option></select></div>
+<div class="control volume-control">
+<label for="volume">Ses <output id="volumeValue">65%</output></label>
+<input type="range" id="volume" min="0" max="100" value="65"></div>
+<div class="control room-control">
+<label for="room">Oda <output id="roomValue">20%</output></label>
+<input type="range" id="room" min="0" max="60" value="20"></div></div>
 <div class="guitar-stage">
+
+<!-- YAZI ALANI: Gitar üzerindeki küçük PLAY SOMETHING yazısı burada. Akor isimleri music.mjs dosyasından gelir. -->
 <div class="stage-caption"><span>01 / PLAY SOMETHING</span><span class="current-chord"><b id="currentChord">Em</b><span id="currentChordName">Mi minör</span></span></div>
 <svg class="guitar-art" viewBox="0 0 980 460" fill="none" aria-hidden="true">
-<defs><linearGradient id="wood" x1="70" y1="110" x2="460" y2="380" gradientUnits="userSpaceOnUse"><stop stop-color="#e4bc86"/><stop offset=".5" stop-color="#f1d3a5"/><stop offset="1" stop-color="#c99c69"/></linearGradient><linearGradient id="neck" x1="458" x2="854" y1="200" y2="240" gradientUnits="userSpaceOnUse"><stop stop-color="#403128"/><stop offset=".5" stop-color="#654637"/><stop offset="1" stop-color="#342923"/></linearGradient><radialGradient id="hole"><stop stop-color="#1a1717"/><stop offset="1" stop-color="#342a24"/></radialGradient><filter id="shadow" x="-20%" y="-30%" width="150%" height="170%"><feDropShadow dx="0" dy="20" stdDeviation="15" flood-color="#544631" flood-opacity=".16"/></filter><pattern id="grain" width="16" height="200" patternUnits="userSpaceOnUse"><path d="M2 0C11 45-3 110 2 200M9 0C16 95 5 120 9 200" stroke="#8e5e39" stroke-opacity=".07"/></pattern></defs>
+<defs><linearGradient id="wood" x1="70" y1="110" x2="460" y2="380" gradientUnits="userSpaceOnUse"><stop class="wood-light" stop-color="#e4bc86"/><stop class="wood-middle" offset=".5" stop-color="#f1d3a5"/><stop class="wood-dark" offset="1" stop-color="#c99c69"/></linearGradient><linearGradient id="neck" x1="458" x2="854" y1="200" y2="240" gradientUnits="userSpaceOnUse"><stop stop-color="#403128"/><stop offset=".5" stop-color="#654637"/><stop offset="1" stop-color="#342923"/></linearGradient><radialGradient id="hole"><stop stop-color="#1a1717"/><stop offset="1" stop-color="#342a24"/></radialGradient><filter id="shadow" x="-20%" y="-30%" width="150%" height="170%"><feDropShadow dx="0" dy="20" stdDeviation="15" flood-color="#544631" flood-opacity=".16"/></filter><pattern id="grain" width="16" height="200" patternUnits="userSpaceOnUse"><path d="M2 0C11 45-3 110 2 200M9 0C16 95 5 120 9 200" stroke="#8e5e39" stroke-opacity=".07"/></pattern></defs>
 <g filter="url(#shadow)"><path d="M427 130C448 135 460 159 472 174L830 174L854 156L929 166Q949 225 929 285L854 294L830 276L472 276C459 292 448 317 427 322C394 328 380 297 352 309C335 318 316 368 258 388C153 425 53 354 49 231C45 107 145 30 253 60C318 78 329 132 354 143C379 157 398 126 427 130Z" fill="url(#wood)" stroke="#ad8155" stroke-width="3"/>
 <path d="M420 141C392 137 378 171 350 153C325 137 311 90 252 73C151 44 61 114 62 232C63 345 153 412 254 376C310 357 325 311 349 299C379 282 395 320 424 311C446 305 453 277 465 272L465 179C451 171 445 144 420 141Z" fill="url(#grain)" stroke="#805c3a" stroke-opacity=".4" stroke-width="2"/>
 <circle cx="330" cy="229" r="75" fill="#b68859"/><circle cx="330" cy="229" r="70" stroke="#4f3b29" stroke-width="3"/><circle cx="330" cy="229" r="66" stroke="#f5dab1" stroke-width="3"/><circle cx="330" cy="229" r="61" fill="url(#hole)"/>
@@ -30,23 +78,92 @@
 <g fill="#dfd1ba"><circle cx="582" cy="226" r="4"/><circle cx="690" cy="226" r="4"/><circle cx="478" cy="213" r="4"/><circle cx="478" cy="240" r="4"/></g>
 <g fill="#c3b5a1" stroke="#8f8172" stroke-width="2"><rect x="859" y="146" width="11" height="18" rx="4"/><rect x="886" y="150" width="11" height="18" rx="4"/><rect x="912" y="154" width="11" height="18" rx="4"/><rect x="859" y="287" width="11" height="18" rx="4"/><rect x="886" y="284" width="11" height="18" rx="4"/><rect x="912" y="280" width="11" height="18" rx="4"/></g>
 <path d="M851 183L921 187L928 267L851 272Z" stroke="#956c49"/>
+<!-- YAZI ALANI: Gitarın ahşabı üzerindeki nazlı imzası aşağıdaki text etiketinde. -->
 <text transform="translate(900 243) rotate(-90)" fill="#664934" font-family="Georgia,serif" font-size="15" font-style="italic">nazlı</text>
 </g></svg>
 <div class="string-bed" id="strings" aria-label="Gitar telleri; sürükleyerek veya dokunarak çal"></div>
+
+<!-- YAZI ALANI: Akort açıklaması ve klavye ipucu burada. -->
 <div class="stage-footer"><span><i></i> Standart akort · E A D G B e</span><span class="desktop-hint">Teller: <kbd>1</kbd> – <kbd>6</kbd></span></div>
 </div>
-<div class="strum-row"><button id="strumDown" class="strum primary"><span>↓</span> Aşağı tara <kbd>Space</kbd></button><button id="strumUp" class="strum"><span>↑</span> Yukarı tara</button></div>
+
+<!-- YAZI ALANI: Aşağı / Yukarı tara düğmelerinin yazıları burada. -->
+<div class="strum-row">
+<button id="strumDown" class="strum primary"><span>↓</span> Aşağı tara <kbd>Space</kbd></button>
+<button id="strumUp" class="strum"><span>↑</span> Yukarı tara</button></div>
+
+<!-- YAZI ALANI: Tellerin altındaki kullanım açıklamasını buradan değiştirebilirsin. -->
 <p class="play-hint">Tellerin üzerinde parmağını kaydır veya tek tek dokun.</p>
 </section>
 <aside class="side-panel">
-<section class="chords-section" aria-labelledby="chordTitle"><div class="section-title"><h2 id="chordTitle">Akor paleti</h2><span>Q – I</span></div><p class="section-description">Bir renk seç, bir şeyler çal.</p><div id="chords" class="chord-grid" aria-label="Akor seç"></div><div class="chord-info"><svg id="chordDiagram" viewBox="0 0 116 128" role="img" aria-label="Em akor basışı"></svg><div><strong id="diagramName">Mi minör</strong><p id="fingering">0 · 2 · 2 · 0 · 0 · 0</p><small>0 açık tel · × sessiz tel</small><button id="openStrings" class="text-button">Açık telleri çal ↗</button></div></div></section>
-<section class="rhythm-section" aria-labelledby="rhythmTitle"><div class="section-title"><h2 id="rhythmTitle">Ritmini bul</h2><span id="bpmBadge">80 BPM</span></div><div class="pattern-select"><label class="sr-only" for="pattern">Ritim şekli</label><select id="pattern"><option value="simple">Sade · ↓ ↓ ↓ ↓</option><option value="folk">Folk · ↓ ↓↑ ↑↓↑</option><option value="arpeggio">Arpej · tel tel</option></select></div><div class="tempo-row"><label for="bpm">Tempo</label><input type="range" id="bpm" min="50" max="160" value="80"><output id="bpmValue">80</output></div><div class="rhythm-bottom"><button id="rhythmToggle" class="rhythm-button" aria-pressed="false">▶ Ritmi başlat</button><button id="metroToggle" class="metro-button" aria-label="Metronomu aç" aria-pressed="false" title="Metronom">♩</button><div class="beat-dots" aria-label="Vuruş göstergesi"><i></i><i></i><i></i><i></i></div></div></section>
+
+<!-- YAZI ALANI: Akor paleti başlığı ve açıklaması burada. Otomatik akor isimlerini music.mjs içindeki name alanlarından değiştir. -->
+<section class="chords-section" aria-labelledby="chordTitle">
+<div class="section-title">
+<h2 id="chordTitle">Akor paleti</h2><span>Q – I</span></div>
+<p class="section-description">Bir renk seç, bir şeyler çal.</p>
+<div id="chords" class="chord-grid" aria-label="Akor seç"></div>
+<div class="chord-info"><svg id="chordDiagram" viewBox="0 0 116 128" role="img" aria-label="Em akor basışı"></svg>
+<div><strong id="diagramName">Mi minör</strong>
+<p id="fingering">0 · 2 · 2 · 0 · 0 · 0</p><small>0 açık tel · × sessiz tel</small>
+<button id="openStrings" class="text-button">Açık telleri çal ↗</button></div></div>
+</section>
+
+<!-- YAZI ALANI: Ritim başlığı, ritim seçenekleri ve tempo etiketi burada. Değişen başlat/durdur yazıları app.mjs içindeki YAZILAR bölümünde. -->
+<section class="rhythm-section" aria-labelledby="rhythmTitle">
+<div class="section-title">
+<h2 id="rhythmTitle">Ritmini bul</h2><span id="bpmBadge">80 BPM</span></div>
+<div class="pattern-select">
+<label class="sr-only" for="pattern">Ritim şekli</label>
+<select id="pattern">
+<option value="simple">Sade · ↓ ↓ ↓ ↓</option>
+<option value="folk">Folk · ↓ ↓↑ ↑↓↑</option>
+<option value="arpeggio">Arpej · tel tel</option></select></div>
+<div class="tempo-row">
+<label for="bpm">Tempo</label>
+<input type="range" id="bpm" min="50" max="160" value="80"><output id="bpmValue">80</output></div>
+<div class="rhythm-bottom">
+<button id="rhythmToggle" class="rhythm-button" aria-pressed="false">▶ Ritmi başlat</button>
+<button id="metroToggle" class="metro-button" aria-label="Metronomu aç" aria-pressed="false" title="Metronom">♩</button>
+<div class="beat-dots" aria-label="Vuruş göstergesi"><i></i><i></i><i></i><i></i></div></div>
+</section>
 </aside>
 </div>
-<section class="recorder" aria-labelledby="recordTitle"><div class="record-heading"><span class="tape-icon" aria-hidden="true">▣</span><div><h2 id="recordTitle">Senin küçük kaydın</h2><p id="recordStatus" role="status">Bir fikrin varsa, kaybolmasın.</p></div></div><div class="recording-preview"><canvas id="waveform" aria-label="Kaydın nota zaman çizelgesi" role="img"></canvas><span id="recordTime">00:00</span></div><div class="record-controls"><button id="recordToggle" class="record-button" aria-pressed="false"><span class="record-dot"></span><span id="recordLabel">Kaydet</span></button><button id="playRecording" class="icon-btn" aria-label="Kaydı dinle" disabled>▶</button><button id="loopToggle" class="icon-btn" aria-label="Kaydı döngüye al" aria-pressed="false" disabled>↻</button><button id="downloadRecording" class="download-button" disabled>WAV indir ↗</button></div></section>
-<footer><p><span class="footer-heart">♡</span> nazlı studio <span>—</span> kusursuz olmak zorunda değil.</p><button class="text-button" id="helpFooter">Kısayollar & nasıl çalınır ↗</button></footer>
+
+<!-- YAZI ALANI: Kayıt bölümünün başlığı burada. Durum mesajları ve değişen düğme yazıları app.mjs içindeki YAZILAR bölümünde. -->
+<section class="recorder" aria-labelledby="recordTitle">
+<div class="record-heading"><span class="tape-icon" aria-hidden="true">▣</span>
+<div>
+<h2 id="recordTitle">Senin küçük kaydın</h2>
+<p id="recordStatus" role="status">Bir fikrin varsa, kaybolmasın.</p></div></div>
+<div class="recording-preview"><canvas id="waveform" aria-label="Kaydın nota zaman çizelgesi" role="img"></canvas><span id="recordTime">00:00</span></div>
+<div class="record-controls">
+<button id="recordToggle" class="record-button" aria-pressed="false"><span class="record-dot"></span><span id="recordLabel">Kaydet</span></button>
+<button id="playRecording" class="icon-btn" aria-label="Kaydı dinle" disabled>▶</button>
+<button id="loopToggle" class="icon-btn" aria-label="Kaydı döngüye al" aria-pressed="false" disabled>↻</button>
+<button id="downloadRecording" class="download-button" disabled>WAV indir ↗</button></div>
+</section>
+
+<!-- YAZI ALANI: Sayfanın en altındaki imzayı ve cümleyi buradan değiştirebilirsin. -->
+<footer><p><span class="footer-heart">♡</span> nazlı studio <span>—</span> kusursuz olmak zorunda değil.</p>
+<button class="text-button" id="helpFooter">Kısayollar & nasıl çalınır ↗</button>
+</footer>
 </main>
-<dialog id="helpDialog"><div class="dialog-top"><h2>İlk akorun bir dokunuş uzakta.</h2><button id="helpClose" class="icon-btn" aria-label="Yardımı kapat">×</button></div><p>Bir akor seç, sonra telleri tek tek çal veya aşağı/yukarı tara. Telefonda tel alanında parmağını kaydırarak da çalabilirsin.</p><dl><div><dt><kbd>1</kbd> – <kbd>6</kbd></dt><dd>Kalından inceye teller</dd></div><div><dt><kbd>Q W E R T Y U I</kbd></dt><dd>Em, Am, C, G, D, Dm, F, A</dd></div><div><dt><kbd>Space</kbd> / <kbd>↓</kbd></dt><dd>Aşağı tara</dd></div><div><dt><kbd>↑</kbd></dt><dd>Yukarı tara</dd></div><div><dt><kbd>Esc</kbd></dt><dd>Tüm sesleri durdur</dd></div></dl><p>Kayıt en fazla 60 saniye sürer. Son kayıt bu tarayıcıda saklanır; WAV olarak indirebilirsin. “Yeni kayıt” öncekinin yerini alır.</p><p class="help-note">Tınılar tarayıcıda sentezlenir. Sesi açmak için bir tele dokun; ses gelmiyorsa cihazının medya sesini kontrol et.</p></dialog>
+
+<!-- YAZI ALANI: Yardım penceresinin başlığını, açıklamalarını ve kısayol açıklamalarını burada değiştirebilirsin. -->
+<dialog id="helpDialog">
+<div class="dialog-top">
+<h2>İlk akorun bir dokunuş uzakta.</h2>
+<button id="helpClose" class="icon-btn" aria-label="Yardımı kapat">×</button></div><p>Bir akor seç, sonra telleri tek tek çal veya aşağı/yukarı tara. Telefonda tel alanında parmağını kaydırarak da çalabilirsin.</p><dl>
+<div><dt><kbd>1</kbd> – <kbd>6</kbd></dt><dd>Kalından inceye teller</dd></div>
+<div><dt><kbd>Q W E R T Y U I</kbd></dt><dd>Em, Am, C, G, D, Dm, F, A</dd></div>
+<div><dt><kbd>Space</kbd> / <kbd>↓</kbd></dt><dd>Aşağı tara</dd></div>
+<div><dt><kbd>↑</kbd></dt><dd>Yukarı tara</dd></div>
+<div><dt><kbd>Esc</kbd></dt><dd>Tüm sesleri durdur</dd></div></dl><p>Kayıt en fazla 60 saniye sürer. Son kayıt bu tarayıcıda saklanır; WAV olarak indirebilirsin. “Yeni kayıt” öncekinin yerini alır.</p>
+<p class="help-note">Tınılar tarayıcıda sentezlenir. Sesi açmak için bir tele dokun; ses gelmiyorsa cihazının medya sesini kontrol et.</p></dialog>
 <div class="toast" id="toast" role="status"></div>
-<noscript><div class="noscript">Gitarı çalmak için tarayıcında JavaScript açık olmalı.</div></noscript>
+
+<!-- YAZI ALANI: JavaScript kapalıyken görünen açıklamayı buradan değiştirebilirsin. -->
+<noscript>
+<div class="noscript">Gitarı çalmak için tarayıcında JavaScript açık olmalı.</div></noscript>
 </body></html>
